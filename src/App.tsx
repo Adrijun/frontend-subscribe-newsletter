@@ -32,10 +32,11 @@ function App() {
   //     console.log(err); 
   //   }
   // };
+  
   const [newUser, setNewUser] = useState<InewUser>({username:'', password:''})
 
   function sendToApi(){
-    axios.post<InewUser>('')
+    axios.post<InewUser>('http://localhost:3000/users/add')
     .then(res =>{
       console.log(res, 'Rätt');
     }).catch(err =>{
