@@ -2,6 +2,8 @@ import React, { ChangeEvent } from 'react';
 import './App.css';
 import { useState } from "react"
 import axios from 'axios';
+import { request, ServerResponse } from 'http';
+import { Http2ServerRequest } from 'http2';
 
 function App() {
 
@@ -10,36 +12,14 @@ function App() {
     password: String,
     subscribe: boolean
   }
-
-  // const [username, setusername] = useState('');
-  // const [password, setpassword] = useState('');
-  
-  // let handleSubmit = async () =>{
-  //   try{
-  //     let res = await fetch('http://localhost:3000/users/add', {
-  //       method: 'POST',
-  //       body: JSON.stringify({
-  //         username: username,
-  //         password: password,
-  //       }),
-  //     });
-  //     if (res.status === 200){
-  //       console.log('rätt');
-  //     } else {
-  //       console.log('fel');
-  //     }
-  //   } catch (err){
-  //     console.log(err); 
-  //   }
-  // };
   
   const [newUser, setNewUser] = useState<InewUser>({username:'', password:'', subscribe:false})
-
-  console.log(newUser);
+  const [logginUser, setLoggin] = useState<InewUser>({username:'', password:'', subscribe:false})
+  
   
   // pushar till backend -> api
   function sendToApi(){
-    axios.post<InewUser>('http://localhost:3000/users/add', newUser)
+    axios.post<InewUser[]>('http://localhost:3000/users/add', newUser)
     .then(res =>{
       console.log(res, 'Rätt');
     }).catch(err =>{
@@ -47,7 +27,7 @@ function App() {
     });
   }
 
-  // använder oss av inputfällt
+  // använder oss av inputfällt i create user
 function handleChange(e:ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>){
   let name:string = e.target.name;
 
@@ -59,15 +39,55 @@ function handleChange(e:ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputEl
 }
 }
 
+// loggin funktion
+
+interface Iusers {
+    _id: string,
+    username: String,
+    password: String,
+    subscribe: boolean
+}
+let ApiUsers = axios.get<Iusers[]>('http://localhost:3000/users/loggin')
+  .then(res =>{
+    console.log(res, 'Rätt');
+  }).catch(err =>{
+    console.log(err, 'Fel');
+  });
+
+  console.log(logginUser);
+  // använder oss av inputfällt i loggin
+function LogginForm(e:ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>){
+    let name:string = e.target.name;
+  
+    if(name == 'username' || name == 'password'){
+      setLoggin({...logginUser, [name]: e.target.value});
+  }
+    else{
+      console.log('Det blev fel');
+  }
+  }
+
+//loggar in
+function loggin(){
+
+  var users = []
+  // for (const ApiUser of ApiUsers){
+  // }
+
+}
+
   return (
     <div className="App">
    
    <h1>Loggin</h1>
+
+   <form>
    <label htmlFor="username">username</label><br />
-   <input type="text" name='username' /><br />
+   <input type="text" name='username' onChange={LogginForm} /><br />
    <label htmlFor="password">password</label><br />
-   <input type="text" name='password' /><br />
-   <button>skicka</button><br />
+   <input type="text" name='password' onChange={LogginForm} /><br />
+   <button onClick={loggin}>skicka</button><br />
+   </form>
 
 <h1>create user</h1>
 
