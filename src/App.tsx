@@ -47,61 +47,51 @@ interface Iusers {
     password: String,
     subscribe: boolean
 }
-let ApiUsers = axios.get<Iusers[]>('http://localhost:3000/users/loggin')
-  .then(res =>{
-    console.log(res, 'Rätt');
-  }).catch(err =>{
-    console.log(err, 'Fel');
-  });
 
-  console.log(logginUser);
-  // använder oss av inputfällt i loggin
-function LogginForm(e:ChangeEvent<HTMLSelectElement> | ChangeEvent<HTMLInputElement>){
-    let name:string = e.target.name;
-  
-    if(name == 'username' || name == 'password'){
-      setLoggin({...logginUser, [name]: e.target.value});
+  // testning av loggin (fungerar inte än)
+  const [error, setError] = useState(null);
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLoggin = () =>{
+    axios.post('http://localhost:3000/users/loggin', {
+      username: username,
+      password: password
+    }).then(response => {
+      console.log('response', response);
+    }).catch(error => {
+      console.log('err', error);
+    })
   }
-    else{
-      console.log('Det blev fel');
-  }
-  }
-
-//loggar in
-function loggin(){
-
-  var users = []
-  // for (const ApiUser of ApiUsers){
-  // }
-
-}
 
   return (
     <div className="App">
-   
-   <h1>Loggin</h1>
 
-   <form>
-   <label htmlFor="username">username</label><br />
-   <input type="text" name='username' onChange={LogginForm} /><br />
-   <label htmlFor="password">password</label><br />
-   <input type="text" name='password' onChange={LogginForm} /><br />
-   <button onClick={loggin}>skicka</button><br />
-   </form>
+    <h1>Loggin</h1>
 
-<h1>create user</h1>
+    <form>
+      <label htmlFor="username">username</label><br />
+      <input type="text" value={username} onChange={e => setUserName(e.target.value)} /><br />
+      <label htmlFor="password">password</label><br />
+      <input type="text" value={password} onChange={e => setPassword(e.target.value)} /><br />
+      <button onClick={handleLoggin}>skicka</button><br />
 
-<form>
-   <label htmlFor="username">user</label><br />
-   <input type="text" name='username' onChange={handleChange}
-   />
-   <br />
-   <label htmlFor="password">password</label><br />
-   <input type="text" name='password' onChange={handleChange} 
-   />
-   <br />
-   <button onClick={sendToApi}>skapa</button>
-   </form>
+      {error && <p className='error'>{error}</p>}
+    </form>
+
+<h1>Create User</h1>
+
+    <form>
+      <label htmlFor="username">user</label><br />
+      <input type="text" name='username' onChange={handleChange}
+      />
+      <br />
+      <label htmlFor="password">password</label><br />
+      <input type="text" name='password' onChange={handleChange} 
+      />
+      <br />
+      <button onClick={sendToApi}>skapa</button>
+      </form>
     </div>
     
   );
